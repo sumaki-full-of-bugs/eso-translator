@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ESO Translator - The Elder Scrolls Online 専用 リアルタイムチャット翻訳ツール</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <!-- Google Fonts: Cinzel & Noto Sans JP -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #0f1015;
+      --bg-card: #171922;
+      --bg-card-hover: #1f2230;
+      --gold-primary: #d4af37;
+      --gold-light: #f5d77f;
+      --gold-dark: #997a15;
+      --gold-glow: rgba(212, 175, 55, 0.25);
+      --text-main: #e2e4ec;
+      --text-muted: #9aa0b4;
+      --border-color: rgba(212, 175, 55, 0.2);
+      --border-active: rgba(212, 175, 55, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans JP', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      line-height: 1.7;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.12) 0%, transparent 60%),
+        radial-gradient(circle at 10% 30%, rgba(30, 40, 60, 0.4) 0%, transparent 40%);
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header */
+    header {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Cinzel', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      text-decoration: none;
+      letter-spacing: 1px;
+    }
+
+    .logo img {
+      width: 32px;
+      height: 32px;
+    }
+
+    .header-nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.95rem;
+      margin-left: 20px;
+      transition: color 0.2s;
+    }
+
+    .header-nav a:hover {
+      color: var(--gold-light);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 70px 0 50px;
+      text-align: center;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(212, 175, 55, 0.1);
+      border: 1px solid var(--border-color);
+      color: var(--gold-light);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      letter-spacing: 0.5px;
+    }
+
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 3rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.25;
+      margin-bottom: 20px;
+      text-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+    }
+
+    h1 span {
+      background: linear-gradient(135deg, var(--gold-light), var(--gold-primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 36px;
+    }
+
+    /* CTA Buttons */
+    .cta-group {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #e5c158, #b8860b);
+      color: #111;
+      font-weight: 700;
+      font-size: 1.1rem;
+      padding: 16px 36px;
+      border-radius: 10px;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(212, 175, 55, 0.35);
+      transition: all 0.25s ease;
+      border: 1px solid #ffd700;
+    }
+
+    .btn-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(212, 175, 55, 0.5);
+      background: linear-gradient(135deg, #f0cf6a, #c9930f);
+    }
+
+    .btn-sub {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      padding: 16px 28px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      font-weight: 500;
+      transition: all 0.25s ease;
+    }
+
+    .btn-sub:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--gold-primary);
+    }
+
+    .version-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Screenshots */
+    .screenshot-gallery {
+      margin: 50px auto 70px;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .screenshot-item {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+      background: var(--bg-card);
+      transition: transform 0.3s;
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 300px;
+      max-width: 480px;
+    }
+
+    .screenshot-item.main-tab {
+      border-color: rgba(212, 175, 55, 0.5);
+      box-shadow: 0 0 25px rgba(212, 175, 55, 0.2), 0 10px 30px rgba(0, 0, 0, 0.7);
+    }
+
+    .screenshot-item:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold-light);
+    }
+
+    .screenshot-img-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #090a0e;
+      padding: 10px;
+    }
+
+    .screenshot-item img {
+      width: 100%;
+      height: auto;
+      max-height: 480px;
+      object-fit: contain;
+      display: block;
+      border-radius: 6px;
+    }
+
+    .screenshot-caption {
+      padding: 14px 16px;
+      font-size: 0.9rem;
+      color: var(--gold-light);
+      background: var(--bg-card);
+      text-align: center;
+      border-top: 1px solid rgba(212, 175, 55, 0.15);
+      font-weight: 500;
+    }
+
+    /* Features Grid */
+    .section-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-title h2 {
+      font-family: 'Cinzel', serif;
+      font-size: 2.2rem;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .section-title p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 24px;
+      margin-bottom: 80px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      padding: 32px 24px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .feature-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-active);
+      transform: translateY(-4px);
+    }
+
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 16px;
+      display: inline-block;
+    }
+
+    .feature-card h3 {
+      font-size: 1.25rem;
+      color: var(--gold-light);
+      margin-bottom: 12px;
+    }
+
+    .feature-card p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Setup Steps Section */
+    .setup-section {
+      background: #14161f;
+      border-radius: 16px;
+      padding: 48px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 80px;
+    }
+
+    .highlight-banner {
+      background: rgba(212, 175, 55, 0.1);
+      border-left: 4px solid var(--gold-primary);
+      padding: 16px 20px;
+      border-radius: 6px;
+      margin-bottom: 36px;
+      font-size: 0.95rem;
+      color: #f7e7b5;
+    }
+
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+    }
+
+    .step-number {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+      color: #111;
+      font-weight: 700;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .step-content {
+      flex: 1;
+    }
+
+    .step-content h3 {
+      font-size: 1.15rem;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .step-content p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .tool-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-tool {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      transition: background 0.2s;
+    }
+
+    .btn-tool:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--gold-primary);
+    }
+
+    .btn-tool.required {
+      border-color: rgba(212, 175, 55, 0.6);
+      background: rgba(212, 175, 55, 0.15);
+      color: var(--gold-light);
+    }
+
+    /* FAQ */
+    .faq-section {
+      margin-bottom: 80px;
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 20px 24px;
+    }
+
+    .faq-q {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .faq-a {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 40px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    footer p {
+      margin-bottom: 8px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      h1 { font-size: 2.1rem; }
+      .screenshot-gallery { grid-template-columns: 1fr; }
+      .setup-section { padding: 24px; }
+      .step-item { gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <a href="#" class="logo">
+        <img src="favicon.ico" alt="Icon">
+        ESO Translator <span style="font-size: 0.75rem; font-family: 'Noto Sans JP', sans-serif; font-weight: 500; padding: 2px 8px; border-radius: 4px; background: rgba(245, 158, 11, 0.2); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.4); vertical-align: middle;">Beta / 準備中</span>
+      </a>
+      <nav class="header-nav">
+        <a href="#features">特徴</a>
+        <a href="#setup">導入手順</a>
+        <a href="#faq">よくある質問</a>
+      </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="badge-pill" style="border-color: rgba(245, 158, 11, 0.5); background: rgba(245, 158, 11, 0.15); color: #fbbf24;">
+        🚧 現在テスト運用中 (Beta) ＆ スラング・辞書データ鋭意収集中
+      </div>
+      <h1>言葉の壁を越えて、<br><span>タムリエルの冒険へ。</span></h1>
+      <p class="hero-desc">
+        海外サーバーでのチャット、もう怖くない。<br>
+        ESO特有のスラング・略語をローカルAIでリアルタイム高精度翻訳。<br>
+        ゲームの通信やフレームレートを妨げにくい設計の、軽量コンパニオンアプリ。
+      </p>
+
+      <!-- テスト中・準備中のお知らせバナー -->
+      <div style="max-width: 720px; margin: 0 auto 30px; background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 10px; padding: 14px 20px; font-size: 0.9rem; color: #fde68a; text-align: left; line-height: 1.6;">
+        📢 <strong>【テスター向け先行配布・サイト準備中】</strong><br>
+        本アプリは現在、ゲーム内のスラングやチャットログから例文・辞書データを抽出・収集している<strong>テスト運用段階（開発・準備中）</strong>です。動作検証およびテストプレイヤー様向けに先行配布を行っております。
+      </div>
+
+      <div class="cta-group">
+        <!-- 本体ダウンロード (GitHub Releases 直リンク) -->
+        <a href="https://github.com/takayuki520724-debug/eso-translator/releases/download/v1.0.3/ESO_Translator_v1.0.3.exe.zip" class="btn-download">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          ① 本体一式 (v1.0.3)
+        </a>
+        <!-- 最新辞書のみダウンロード -->
+        <a href="ESO_Dict_latest.zip" download class="btn-sub" style="border-color: rgba(212, 175, 55, 0.4); background: rgba(212, 175, 55, 0.1); color: var(--gold-light);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 6px;"><path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H8V4h12v12z"/></svg>
+          ② 最新辞書のみ (更新用)
+        </a>
+        <!-- 自動化アドオン -->
+        <a href="AutoChatLog.zip" download class="btn-sub">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 6px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          ③ 自動化アドオン (任意)
+        </a>
+      </div>
+
+      <div class="version-meta">
+        Windows 10 / 11 (64bit) | Version 1.0.3 (Test Build) | VRAM 8GB以上推奨（最低6GB） | テスト版無料配布中
+      </div>
+
+      <!-- Screenshot Gallery -->
+      <div class="screenshot-gallery">
+        <div class="screenshot-item main-tab">
+          <div class="screenshot-img-wrap">
+            <img src="translation_tab.png" alt="ESO Translator 翻訳タブ画面">
+          </div>
+          <div class="screenshot-caption">✨【リアルタイム翻訳画面】原文と訳文を両方表示＆誤字・他言語の自動検知</div>
+        </div>
+        <div class="screenshot-item">
+          <div class="screenshot-img-wrap">
+            <img src="screenshot1.jpg" alt="ESO Translator About・設定画面">
+          </div>
+          <div class="screenshot-caption">AboutタブでOllamaやVOICEVOXの稼働状態・ログパスを一括確認</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="features-section">
+      <div class="section-title">
+        <h2>主な特徴</h2>
+        <p>MMORPGを心ゆくまで楽しむために設計された、妥協のないこだわり</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3>ESO特有のスラング・略語に対応</h3>
+          <p>
+            「LFG」「WTB」「vet」「aggro」など、MMO特有の崩れた文法や省略語句を網羅した専用辞書を内蔵。DeepLやGoogle翻訳では崩れがちなチャットも、文脈を汲み取って的確に日本語化します。
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>ローカルAI駆動＆下準備全自動</h3>
+          <p>
+            外部の有料API契約は一切不要。PC内のAI（Ollama）を使用するため完全無料で使い放題です。面倒なモデルダウンロードや初期設定は、アプリが自動で全て完了してくれます。<br>
+            <span style="display: inline-block; margin-top: 8px; font-size: 0.85rem; color: #a5b4fc;">
+              ※ 万が一、インストールするドライブが違ってもアプリが自動で探します。Aboutタブでフォルダパスを手動で指定する事も出来ます。
+            </span>
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>ゲームを重くしにくい軽量設計</h3>
+          <p>
+            ESOプレイ中のVRAMやGPUへの負荷を抑えるため、軽量ローカルLLMと「経験値キャッシュシステム」を採用。反復する定型チャットは瞬時に翻訳し、ゲームへの影響を最小限に抑えます。<br>
+            <span style="display: inline-block; margin-top: 8px; font-size: 0.85rem; color: #fca5a5;">
+              ⚠️ <strong>動作環境のご注意:</strong> グラフィックメモリ（VRAM）は<strong>最低6GB、快適なプレイには8GB以上を推奨</strong>します。また物理メモリ（RAM）が少ない環境ではゲームの挙動に影響が出る場合があります。
+            </span><br>
+            <span style="display: inline-block; margin-top: 6px; font-size: 0.85rem; color: #d4a373;">
+              ※ 軽量モデルを採用している仕様上、一般的な大規模モデルに比べてハルシネーション（不自然な翻訳や創作）が発生しやすい傾向があります。原文と照らし合わせながらご活用ください。
+            </span>
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">✍️</div>
+          <h3>自由自在な辞書編集 ＆ 上書き機能</h3>
+          <p>
+            自分だけの用語集をアプリ内でいつでも編集可能。「語句のおおざっぱな説明」を入力しておくと、AIが文脈を汲み取って翻訳精度が向上します。<br>
+            さらに、<strong>既存の内部辞書を上書きすることも可能</strong>。「ニュアンスがちょっと違うな？」と感じた単語も自分好みの訳へ自由に変更できます。
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔁</div>
+          <h3>双方向の日英翻訳</h3>
+          <p>
+            相手の英語ログを日本語にするだけでなく、自分が送りたい日本語チャットをすばやく英語に変換してコピーできる入力フォームも備えています。海外グループへの参加もスムーズです。<br>
+            <span style="display: inline-block; margin-top: 8px; font-size: 0.85rem; color: #9aa0b4;">
+              ※ 正直なところ、ESOの略語を含まない通常の文章の場合ならDeepL翻訳のほうが遥かに精度が高いです。本機能は「ゲーム中に画面を切り替えず、すばやくやり取りするための補助ツール」としてご活用ください。
+            </span>
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔊</div>
+          <h3>スマート音声読み上げ（緊急通知＆カスタム対応）</h3>
+          <p>
+            VOICEVOXと連携し、辞書内で「読み上げ」に指定された<strong>緊急性の高い重要単語（PvPコールなど）が含まれる場合のみ音声読み上げ</strong>を実行します。普段のチャットで騒がしくなることはなく、危険なコールだけを的確に耳でキャッチできます。<br>
+            <span style="display: inline-block; margin-top: 6px; font-size: 0.85rem; color: #e2e8f0;">
+              ✨ <strong>辞書編集で自由に追加可能：</strong> 読み上げたい単語がある場合は、アプリ内の「辞書編集」で単語を登録し、読み上げを「する」に設定するだけで自分好みに通知ワードをカスタマイズできます。
+            </span><br>
+            <span style="display: inline-block; margin-top: 8px; font-size: 0.85rem; color: #a3e635;">
+              🔊 <strong>音声テスト機能:</strong> 音量ツマミを左右に動かすと「なのだ」とテスト発言するため、その場で音量やスピーカー出力を確認できます。<br>
+              💡 <strong>Tips:</strong> 「なのだ」が脳にこびりついて離れなくなった時は、読み上げ設定の所にある「VOICEVOX:ずんだもん」をクリックすると緑文字がグレーアウトし、「なのだ」の付与がなくなります。
+            </span>
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>原文と訳文の比較 ＆ スマート検知</h3>
+          <p>
+            翻訳タブには「元の英文」と「日本語訳」が両方表示されるため、ニュアンスの確認も容易です。海外プレイヤーのタイポ（誤字）や他言語が混ざった際、AIがなんとか頑張って訳そうとしてしまっても、アプリ側で自動検知して<strong>「（誤字の可能性あり）」「（英語以外の可能性あり）」</strong>と親切に注釈を添えてくれます。
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔒</div>
+          <h3>安全・BANの心配なし</h3>
+          <p>
+            ゲームの実行メモリ改変やマクロツールではなく、ESO公式が出力するチャットログファイル（ChatLog.log）を安全に読み取る仕組みのため、規約違反の心配なく利用できます。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Setup Guide -->
+    <section id="setup" class="setup-section">
+      <div class="section-title" style="margin-bottom: 24px;">
+        <h2>かんたん導入ガイド</h2>
+        <p>事前の準備ツールさえ入れておけば、あとはアプリにおまかせ！</p>
+      </div>
+
+      <div class="highlight-banner">
+        💡 <strong>ポイント：</strong> AIモデルのインストールや面倒な下準備は、<strong>本アプリを初回起動した際にすべて自動でセットアップ</strong>されます。難しいコマンド操作などは一切必要ありません！
+      </div>
+
+      <div class="step-list">
+        <!-- Step 1 -->
+        <div class="step-item">
+          <div class="step-number">1</div>
+          <div class="step-content">
+            <h3>前提ツールをダウンロードする</h3>
+            <p>
+              翻訳用のAIエンジン「Ollama」を事前にPCにインストールしておいてください。<br>
+              （音声読み上げ機能を使いたい場合のみ、「VOICEVOX」も一緒にダウンロードしてください）<br>
+              <small style="color: #888e9f;">※ 別のドライブ（Dドライブ等）にインストールした場合でもアプリが自動検出し、Aboutタブから手動指定も可能です。</small>
+            </p>
+            <div class="tool-links">
+              <a href="https://ollama.com/download/windows" target="_blank" class="btn-tool required">
+                📥 Ollama 公式サイト（必須）
+              </a>
+              <a href="https://voicevox.hiroshiba.jp/" target="_blank" class="btn-tool">
+                🔊 VOICEVOX 公式サイト（任意・読み上げ用）
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="step-item">
+          <div class="step-number">2</div>
+          <div class="step-content">
+            <h3>ESOのチャットログ出力を有効にする（重要）</h3>
+            <p>
+              本アプリはESOが出力するチャットログを読み取るため、ゲーム側でログ出力がONになっている必要があります。<br>
+              毎回ゲーム内で <code>/chatlog</code> と手動入力するか、<strong>起動時に自動でONにしてくれる便利アドオン「AutoChatLog」</strong>のご利用がおすすめです。
+            </p>
+            <div class="tool-links" style="margin-top: 10px;">
+              <a href="AutoChatLog.zip" download class="btn-tool" style="border-color: rgba(212, 175, 55, 0.4); background: rgba(212, 175, 55, 0.1);">
+                🧩 自動化アドオン「AutoChatLog.zip」をダウンロード
+              </a>
+            </div>
+            <p style="font-size: 0.85rem; color: #888e9f; margin-top: 8px;">
+              ※ アドオンの導入方法：zipを解凍して出てきた <code>AutoChatLog</code> フォルダを、ESOのアドオンフォルダ（<code>ドキュメント\Elder Scrolls Online\live\AddOns</code>）に入れるだけです。
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="step-item">
+          <div class="step-number">3</div>
+          <div class="step-content">
+            <h3>ESO Translator をダウンロードして解凍</h3>
+            <p>
+              初めての方は「本体一式」をダウンロードし、お好きなフォルダに解凍してください。<br>
+              すでに本体をお持ちで辞書のみ更新したい方は、「最新辞書のみ」をダウンロードしてアプリフォルダ内の辞書ファイルを上書きしてください。
+            </p>
+            <div class="tool-links">
+              <a href="https://github.com/takayuki520724-debug/eso-translator/releases/download/v1.0.3/ESO_Translator_v1.0.3.exe.zip" class="btn-tool required" style="background: rgba(212,175,55,0.25);">
+                📦 本体一式 (ESO_Translator_v1.0.3.exe.zip)
+              </a>
+              <a href="ESO_Dict_latest.zip" download class="btn-tool" style="border-color: rgba(212, 175, 55, 0.4); background: rgba(212, 175, 55, 0.1);">
+                📖 最新辞書のみ (ESO_Dict_latest.zip)
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="step-item">
+          <div class="step-number">4</div>
+          <div class="step-content">
+            <h3>アプリを起動するだけ！</h3>
+            <p>
+              解凍したフォルダ内にある <strong>ESO_Translator.exe</strong> を起動します。<br>
+              初回起動時にAIの準備が自動で行われます。あとはESOを起動してプレイをお楽しみください！
+            </p>
+            <p style="font-size: 0.85rem; color: #a5b4fc; margin-top: 6px;">
+              💡 <strong>状態チェック：</strong> アプリ内の「About」タブを開くと、OllamaやVOICEVOXが「利用可能状態」にあるかを一目で確認できます。また、ESOの <code>ChatLog.log</code> の参照パスもここで確認・変更が可能です（通常はデフォルトで自動指定されています）。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="faq" class="faq-section">
+      <div class="section-title">
+        <h2>よくある質問 (Q&A)</h2>
+        <p>困ったときや不安な点はこちらをご確認ください</p>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q">Q. 必要なPCスペック（動作環境）はどのくらいですか？</div>
+          <div class="faq-a">
+            ESOとローカルAI（Ollama）を同時に動かすため、以下の環境を推奨しています：<br>
+            ・<strong>GPU（グラフィックメモリ / VRAM）：</strong> <strong>8GB以上を推奨</strong>（最低6GB。※VRAMが6GB未満の環境では、ゲームとAIの同時起動で動作が不安定になる場合があります）<br>
+            ・<strong>メインメモリ（RAM）：</strong> 16GB以上推奨（物理メモリが少ない環境では、ゲームの挙動に影響が出る場合があります）
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Q. 翻訳が少し不自然だったり、内容が脚色される（ハルシネーション）ことがあります</div>
+          <div class="faq-a">
+            本アプリは<strong>「ESOを快適にプレイしながら同時起動できる軽さ」を最優先</strong>にし、PCのVRAMやGPUを圧迫しない軽量ローカルLLMを採用しています。<br>
+            そのため、大規模なクラウドAIと比べるとAI特有のハルシネーション（誤訳や意図しない補完）が発生しやすい特性があります。ニュアンスが怪しいと感じた際は、画面に併記されている「原文（英語）」も合わせてご確認ください。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Q. ゲーム内でチャットが流れているのに、アプリに反映・翻訳されません</div>
+          <div class="faq-a">
+            ESO側でチャットログの記録がONになっていない可能性があります。<br>
+            ゲーム内のチャット入力欄に <strong><code>/chatlog</code></strong> と入力してEnterを押すか、サイト内で配布している自動化アドオン<strong>「AutoChatLog」</strong>を導入してください。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Q. なんでずんだもんなの？</div>
+          <div class="faq-a">
+            作者がアプリ開発中に<strong>脳がずんだに汚染された為</strong>です。（※聞き取りやすい声質で戦闘中もコールが通りやすいという実用上のメリットもあります）
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Q. 起動時に「WindowsによってPCが保護されました」と青い画面が出ます</div>
+          <div class="faq-a">
+            個人開発のアプリケーションであるため、Windows SmartScreen機能による確認画面が表示されます。<br>
+            画面内の<strong>「詳細情報」をクリック ＞ 「実行」</strong>を選択していただくことで、安全に起動できます。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Q. 本当に完全無料ですか？後から請求されたりしませんか？</div>
+          <div class="faq-a">
+            はい、完全に無料です。OpenAIなどの有料クラウドAPIではなく、ご自身のPC内（Ollama）で動作するローカルAIモデルを使用しているため、どれだけ翻訳しても費用は一切かかりません。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Q. OllamaやVOICEVOXが正しく動いているか確認する方法はありますか？</div>
+          <div class="faq-a">
+            アプリ内の<strong>「About」タブ</strong>を開くと、OllamaおよびVOICEVOXが「利用可能状態」になっているかをチェックできます。<br>
+            ・<strong>VOICEVOXの動作テスト：</strong> 音量ツマミを左右にずらすと「なのだ」とテスト発言するため、正しく音が出ているかその場ですぐに確認できます。<br>
+            ・<strong>ログパスの確認：</strong> ESOのチャットログ（ChatLog.log）の参照先フォルダパスもAboutタブ内で確認・手動変更が可能です（通常はデフォルトで自動設定されています）。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Q. 翻訳のニュアンスを変更したり、新しい単語を登録できますか？</div>
+          <div class="faq-a">
+            はい、アプリ内の<strong>「辞書編集」機能</strong>から自由に追加・修正が可能です。<br>
+            ・新しい単語の登録はもちろん、<strong>既存の内部辞書の上書きも可能</strong>なため、「ニュアンスが違うな？」と思った単語をいつでも自分好みに変更できます。<br>
+            ・登録時に「語句のおおざっぱな説明」を添えておくと、AIが文脈を理解して翻訳精度がさらに向上します。<br>
+            ・単語ごとにVOICEVOXで音声読み上げを行うかどうかも個別に指定できます。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Q. チャットが流れるたびに毎回音声が鳴るのですか？</div>
+          <div class="faq-a">
+            いいえ、全てのチャットを読み上げるわけではありません。辞書内で「読み上げ」に指定されている<strong>PvP用語や重要コールなど、緊急性の高い単語が含まれた時だけ読み上げ</strong>が発生します。普段のチャットでゲーム音が遮られる心配はありません。<br>
+            また、通知してほしい単語がある場合は、アプリ内の<strong>「辞書編集」から単語を追加し、読み上げを「する」に設定するだけで自由に追加</strong>できます。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Q. VOICEVOXを入れないと翻訳機能は使えませんか？</div>
+          <div class="faq-a">
+            いいえ、VOICEVOXは「音声を読み上げたい場合のみ」のオプションです。画面上でのテキスト翻訳だけであれば、Ollamaのみで問題なく動作します。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Q. ずんだもんの語尾（「〜なのだ」）を解除したいです</div>
+          <div class="faq-a">
+            「なのだ」が脳にこびりついて離れなくなった時は、読み上げ設定の所にある<strong>「VOICEVOX:ずんだもん」</strong>をクリックしてください。<br>
+            緑色の文字がグレーアウトし、語尾への「なのだ」の付与がオフになります。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Q. ESOのゲームアカウントが停止（BAN）される危険はありませんか？</div>
+          <div class="faq-a">
+            本アプリはゲームのプログラムやメモリを一切改変しません。ESO公式のチャットログ機能が出力するテキストファイルを読み取っているだけですので、安心してご利用いただけます。
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p>ESO Translator © 2026 Developed for Tamriel Adventurers</p>
+      <p style="font-size: 0.75rem; color: #666;">
+        ※ 本アプリケーションは非公式ファンメイドツールです。「The Elder Scrolls Online」および関連商標は ZeniMax Media Inc. および Bethesda Softworks に帰属します。
+      </p>
+    </footer>
+  </div>
+
+</body>
+</html>
