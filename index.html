@@ -895,6 +895,31 @@
         </div>
 
         <div class="faq-item">
+          <div class="faq-q">Q. VOICEVOX本体を起動しても「利用不可」のままになります</div>
+          <div class="faq-a">
+            VOICEVOX本体を起動しているにもかかわらず本アプリで「利用不可」と表示される場合、<strong>Visual C++ ランタイムの不足</strong>、または<strong>セキュリティソフト・ファイアウォールによるローカル通信の遮断</strong>が濃厚です。以下のステップを順にご確認ください。<br><br>
+
+            <strong style="color: var(--gold-light);">1. Microsoft Visual C++ 再頒布可能パッケージの導入（最頻出）</strong><br>
+            Windows 11には標準で比較的新しいランタイムが同梱されていますが、<strong>Windows 10（特にクリーンインストール直後や古いビルド）</strong>では、VOICEVOXのエンジン（C++製）を動かすための「Microsoft Visual C++ 2015-2022 再頒布可能パッケージ (x64)」が入っておらず、内部の <code>run.exe</code> が裏でサイレントクラッシュ（起動即終了）しているケースが多発します。<br>
+            以下のMicrosoft公式リンクから最新の統合パッケージをダウンロードし、インストール後にPCを再起動してください：<br>
+            <a href="https://aka.ms/vs/17/release/vc_redist.x64.exe" target="_blank" style="display: inline-block; margin: 6px 0; color: #93c5fd; text-decoration: underline;">
+              📥 Visual C++ 2015-2022 再頒布可能パッケージ (x64) 公式ダウンロード
+            </a><br><br>
+
+            <strong style="color: var(--gold-light);">2. ファイアウォール・ローカル通信の遮断確認</strong><br>
+            Windowsのファイアウォール設定で、<code>127.0.0.1:50021</code>（ローカル通信）が遮断されているか、<code>run.exe</code> の実行がブロックされている可能性があります。<br>
+            <strong>【確認手順】：</strong> VOICEVOX本体（GUI）を手動で起動した状態で、ブラウザから <a href="http://127.0.0.1:50021/version" target="_blank" style="color: #93c5fd;">http://127.0.0.1:50021/version</a> にアクセスし、バージョン番号（例: <code>"0.26.2"</code>）が表示されるか確認してください。<br>
+            <strong>バージョンが表示されない場合：</strong> PowerShellを管理者として実行し、以下のコマンドを実行してファイアウォールを許可してください：<br>
+            <div style="background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 6px; padding: 10px 14px; margin: 8px 0; overflow-x: auto; font-family: monospace; font-size: 0.85rem; color: #f1f5f9;">
+              netsh advfirewall firewall add rule name="VOICEVOX run.exe" dir=in action=allow program="$env:APPDATA\voicevox\vvpp-engines\VOICEVOX_Engine+074fc39e-678b-4c13-8916-ffca8d505d1d\run.exe" enable=yes
+            </div><br>
+
+            <strong style="color: var(--gold-light);">3. それでも「利用不可」のままの場合（ローカルループバック）</strong><br>
+            開発環境・検証用設定や一部のセキュリティ対策ソフトによって、ローカルループバック通信（<code>127.0.0.1</code> や <code>localhost</code>、hostsファイル、ルーティングテーブル等）が遮断・制限されていないかご確認ください。
+          </div>
+        </div>
+
+        <div class="faq-item">
           <div class="faq-q">Q. ずんだもんの語尾（「〜なのだ」）を解除したいです</div>
           <div class="faq-a">
             「なのだ」が脳にこびりついて離れなくなった時は、読み上げ設定の所にある<strong>「VOICEVOX:ずんだもん」</strong>をクリックしてください。<br>
