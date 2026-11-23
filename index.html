@@ -199,11 +199,13 @@
       border: 1px solid var(--border-color);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
       background: var(--bg-card);
-      transition: transform 0.3s;
+      transition: all 0.3s ease;
       display: flex;
       flex-direction: column;
-      flex: 1 1 300px;
+      flex: 1 1 310px;
       max-width: 480px;
+      cursor: pointer;
+      position: relative;
     }
 
     .screenshot-item.main-tab {
@@ -223,6 +225,22 @@
       justify-content: center;
       background: #090a0e;
       padding: 10px;
+      position: relative;
+    }
+
+    .screenshot-img-wrap::after {
+      content: '🔍 クリックで拡大';
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      background: rgba(0, 0, 0, 0.75);
+      color: var(--gold-light);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+      pointer-events: none;
+      transition: opacity 0.2s;
     }
 
     .screenshot-item img {
@@ -236,12 +254,67 @@
 
     .screenshot-caption {
       padding: 14px 16px;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: var(--gold-light);
       background: var(--bg-card);
       text-align: center;
       border-top: 1px solid rgba(212, 175, 55, 0.15);
-      font-weight: 500;
+      font-weight: 700;
+    }
+
+    .screenshot-desc {
+      padding: 0 16px 16px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      background: var(--bg-card);
+      text-align: left;
+    }
+
+    /* Lightbox Modal */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.9);
+      backdrop-filter: blur(5px);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .lightbox-modal.active {
+      display: flex;
+    }
+
+    .lightbox-content {
+      max-width: 95%;
+      max-height: 92vh;
+      border-radius: 8px;
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 20px var(--gold-glow);
+      border: 1px solid var(--gold-primary);
+      object-fit: contain;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: 700;
+      cursor: pointer;
+      line-height: 1;
+      transition: color 0.2s;
+      z-index: 10000;
+    }
+
+    .lightbox-close:hover {
+      color: var(--gold-light);
     }
 
     /* Features Grid */
@@ -510,17 +583,37 @@
 
       <!-- Screenshot Gallery -->
       <div class="screenshot-gallery">
-        <div class="screenshot-item main-tab">
+        <!-- 1. 翻訳タブ -->
+        <div class="screenshot-item main-tab" onclick="openLightbox('translation_tab.png')">
           <div class="screenshot-img-wrap">
             <img src="translation_tab.png" alt="ESO Translator 翻訳タブ画面">
           </div>
-          <div class="screenshot-caption">✨【リアルタイム翻訳画面】原文と訳文を両方表示＆誤字・他言語の自動検知</div>
-        </div>
-        <div class="screenshot-item">
-          <div class="screenshot-img-wrap">
-            <img src="screenshot1.jpg" alt="ESO Translator About・設定画面">
+          <div class="screenshot-caption">✨【翻訳タブ】リアルタイムチャット翻訳</div>
+          <div class="screenshot-desc">
+            元の英文と日本語訳を両方表示。海外プレイヤーのタイポ（誤字）や英語以外の言語が混ざった場合も、自動検知して「（誤字の可能性あり）」「（英語以外の可能性あり）」と注釈が表示されます。
           </div>
-          <div class="screenshot-caption">AboutタブでOllamaやVOICEVOXの稼働状態・ログパスを一括確認</div>
+        </div>
+
+        <!-- 2. 変換タブ（PvEモード） -->
+        <div class="screenshot-item" onclick="openLightbox('screenshot1.jpg')">
+          <div class="screenshot-img-wrap">
+            <img src="screenshot1.jpg" alt="ESO Translator 変換タブ PvEモード">
+          </div>
+          <div class="screenshot-caption">⚔️【変換タブ・PvE】PT募集・定型文作成</div>
+          <div class="screenshot-desc">
+            目的（LFG/LFM/WTB/WTS等）、難易度（ノーマル/ベテラン等）、ダンジョン名（日本語予測変換対応）、募集ロールを選ぶだけで、英語の募集チャットを一瞬で組み立ててクリップボードにコピーできます。
+          </div>
+        </div>
+
+        <!-- 3. 変換タブ（PvPモード） -->
+        <div class="screenshot-item" onclick="openLightbox('screenshot2.jpg')">
+          <div class="screenshot-img-wrap">
+            <img src="screenshot2.jpg" alt="ESO Translator 変換タブ PvPモード">
+          </div>
+          <div class="screenshot-caption">🛡️【変換タブ・PvP】戦況報告チャット作成</div>
+          <div class="screenshot-desc">
+            「PvPモード」にチェックを入れると専用レイアウトに切り替わり！目的地（砦・資源・橋等）、状態（lit, inc等）、勢力、警戒すべき敵種別（bomber, ganker, ballgroup等）を選んですばやく英語で戦況報告できます。
+          </div>
         </div>
       </div>
     </section>
@@ -828,5 +921,33 @@
     </footer>
   </div>
 
+  <!-- Lightbox Modal -->
+  <div id="lightboxModal" class="lightbox-modal" onclick="closeLightbox()">
+    <span class="lightbox-close" onclick="closeLightbox()">&times;</span>
+    <img id="lightboxImg" class="lightbox-content" src="" alt="拡大画像" onclick="event.stopPropagation()">
+  </div>
+
+  <script>
+    function openLightbox(src) {
+      const modal = document.getElementById('lightboxModal');
+      const img = document.getElementById('lightboxImg');
+      img.src = src;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden'; // 背景スクロール固定
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById('lightboxModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // ESCキーで閉じる
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeLightbox();
+      }
+    });
+  </script>
 </body>
 </html>
