@@ -538,6 +538,10 @@
         <a href="#features">特徴</a>
         <a href="#setup">導入手順</a>
         <a href="#faq">よくある質問</a>
+        <a href="#license">権利表記</a>
+        <a href="#disclaimer">免責事項</a>
+        <!-- 【将来用：バグ報告リンク】公開準備ができたら style="display: none;" を削除して有効化してください -->
+        <a href="https://github.com/sumaki-full-of-bugs/eso-translator/issues" target="_blank" style="display: none;" id="nav-issues">不具合報告</a>
       </nav>
     </header>
 
@@ -934,14 +938,41 @@
             また、ログの肥大化防止措置として、ESOを終了した後に本アプリを終了することで <code>ChatLog.log</code> の中身が自動で削除（クリーンアップ）されるため、長期間のプレイでも安心です。
           </div>
         </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Q. 市販のセキュリティソフトにファイルをブロック・削除されました</div>
+          <div class="faq-a">
+            個人開発の無署名アプリケーションであるため、一部の市販セキュリティソフト（ノートン、ウイルスバスター、マカフィー等）により「未知のファイル」として誤検知（誤認逮捕）される場合があります。<br>
+            本アプリに悪意のあるプログラムは一切含まれておりませんので、セキュリティソフトの管理画面（検知履歴）から<strong>「ファイルの復元」および「除外（例外・監視対象外）設定」</strong>に追加してご利用ください。
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Q. アプリをアンインストール（削除）したい場合はどうすればいいですか？</div>
+          <div class="faq-a">
+            本アプリはPCのシステムやレジストリを変更しないポータブル形式です。<br>
+            不要になった場合は、<strong>解凍したアプリフォルダごとゴミ箱に捨てて削除するだけ</strong>で完全にアンインストールされます。
+          </div>
+        </div>
+      </div>
+
+      <!-- 【将来用：バグ報告・要望窓口（下地）】公開準備ができたら style="display: none;" を外してご利用ください -->
+      <div id="feedback-section" style="display: none; text-align: center; margin-top: 40px;">
+        <p style="color: var(--text-muted); margin-bottom: 12px; font-size: 0.95rem;">
+          不具合のご報告や、辞書に追加してほしいスラング・単語のご要望はこちらからお寄せください。
+        </p>
+        <a href="https://github.com/sumaki-full-of-bugs/eso-translator/issues" target="_blank" class="btn-sub" style="border-color: rgba(212, 175, 55, 0.4); background: rgba(212, 175, 55, 0.1); color: var(--gold-light);">
+          💬 不具合報告・要望はこちら (GitHub Issues)
+        </a>
       </div>
     </section>
 
     <!-- Footer -->
     <footer>
-      <p style="font-weight: 700; color: var(--gold-light); margin-bottom: 16px;">ESO Translator © 2026 Developed by sumaki_full_of_bugs for Tamriel Adventurers</p>
+      <p style="font-weight: 700; color: var(--gold-light); margin-bottom: 20px;">ESO Translator © 2026 Developed by sumaki_full_of_bugs for Tamriel Adventurers</p>
       
-      <div style="max-width: 840px; margin: 0 auto; text-align: left; font-size: 0.75rem; color: #7e8499; line-height: 1.8; background: rgba(0, 0, 0, 0.35); padding: 20px 24px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.15);">
+      <!-- 権利表記 -->
+      <div id="license" style="max-width: 840px; margin: 0 auto 16px; text-align: left; font-size: 0.75rem; color: #7e8499; line-height: 1.8; background: rgba(0, 0, 0, 0.35); padding: 20px 24px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.15);">
         <p style="font-weight: 700; color: var(--text-main); margin-bottom: 8px;">【権利表記・クレジット・ライセンス】</p>
         <ul style="list-style-type: disc; padding-left: 20px; margin: 0; display: flex; flex-direction: column; gap: 6px;">
           <li>
@@ -960,6 +991,14 @@
             <strong>Meta Llama 3.2：</strong> 翻訳モデルに Meta 社の「Llama 3.2」を使用しています。（Built with Meta Llama 3.2 / Llama 3.2 is licensed under the Meta Llama 3.2 Community License, © Meta Platforms, Inc.）
           </li>
         </ul>
+      </div>
+
+      <!-- 免責事項 -->
+      <div id="disclaimer" style="max-width: 840px; margin: 0 auto; text-align: left; font-size: 0.75rem; color: #7e8499; line-height: 1.8; background: rgba(0, 0, 0, 0.35); padding: 20px 24px; border-radius: 8px; border: 1px solid rgba(212, 175, 55, 0.15);">
+        <p style="font-weight: 700; color: var(--text-main); margin-bottom: 8px;">【免責事項】</p>
+        <p style="margin: 0;">
+          本アプリケーションは現状有姿（As-is）で提供される無保証のフリーソフトウェアです。本ツールの使用または使用不能によって生じたいかなる損害・トラブル・データ消失・ゲーム内での不利益等に関しても、制作者は一切の責任を負いかねます。あらかじめご了承の上、自己責任においてご利用ください。
+        </p>
       </div>
     </footer>
   </div>
